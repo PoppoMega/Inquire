@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang = "ja">
+<head>
+<title>問い合わせ</title>
+<meta charset="utf-8">
+<link rel="stylesheet" href="">
+
+</head>
+<body>
+<h1>お問い合わせ一覧</h1>
+検索
+<form action="./top.html">
+    名前:<input><br>
+    問い合わせ日時:<input type="date">~<input type="date"><br>
+    返信有無:<input type="checkbox" name="replay_flg[]">未返信<input type="checkbox" name="replay_flg[]">返信済み<br>
+    <button>検索</button>
+</form>
+
+<table border="1">
+<tr>
+    <th>問い合わせ日時<a href="./top.html">↑</a><a href="./top.html">↓</a></th>
+    <th>名前<a href="./top.html">↑</a><a href="./top.html">↓</a></th>  
+    <th>返信有無</th>
+    <th>問い合わせ本文（最初の何文字か）</th>
+<tr>
+    <td>2020/05/26　11:00:00</td>
+    <th>Name名前</th>
+    <td>返信済み</td>
+    <td>内容なんやかんや・・・</td>
+    <td><a href="inquiry_detail.html">詳細</a></td>
+<tr>
+    <td>2020/05/26</td>
+    <td>在住</td>
+    <td>返信済み</td>
+    <td>内容なんやかんや・・・</td>
+    <td><a href="inquiry_detail.html">詳細</a></td>
+<tr>
+    <td>2020/05/26　11:00:00</td>
+    <td>在住亜種</td>
+    <td>返信済み</td>
+    <td>内容なんやかんや・・・</td>
+    <td><a href="inquiry_detail.html">詳細</a></td>
+</table>
+
+</body>
+</html>
