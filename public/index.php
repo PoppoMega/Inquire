@@ -2,6 +2,9 @@
 
 //初期処理読み込み
 require_once('init.php');
+//出力要設定
+$template_file_name = 'front/inquiry.twig';
+$context = [];
 
 //var_dump($twig);
-echo $twig->render('front/inquiry.twig', []);
+require_once('fin.php');
