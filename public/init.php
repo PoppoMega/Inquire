@@ -1,5 +1,6 @@
 <?php
 ob_start();
+session_start();
 
 define('BASEPATH', realpath(__DIR__ . '/..'));
 /*

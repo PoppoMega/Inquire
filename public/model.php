@@ -1,0 +1,5 @@
+<?php
+
+INSERT,
+UPDATE,
+SELECT (WEHRE , ID)
