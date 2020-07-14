@@ -3,5 +3,8 @@
 //
 require_once('./init.php');
 
-//Config読み込み
-require_once(BASEPATH . '/libs/Config.php');
+
+//test
+//Config::read();
+echo Config::get('db_user') , "\n";
+
