@@ -83,10 +83,12 @@ class Model
         //var_dump($r);
         return($r);
 
-        public static function find($value)
-        {
-            
-        }
+
+    }
+    //
+    public static function find($value)
+    {
+        
     }
 /*
 INSERT,
