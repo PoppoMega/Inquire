@@ -5,4 +5,5 @@ require_once('init.php');
 require_once(BASEPATH . '/libs/AdminAccountsModel.php');
 
 var_dump($_POST);
-exit;
+
+$admin_account_obj = AdminAccount..;

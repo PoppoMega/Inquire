@@ -8,14 +8,15 @@ class Model
         $this->data[$name] = $value;
     }
 
-    public function escape($value)
+    //
+    public static function escape($value)
     {
         //配列がない場合の再度コール
         if(true === is_array($value))
         {
             foreach($value as $k => $v)
             {
-                $value[$k] = $this->escape($v);
+                $value[$k] = static::escape($v);
             }
             return $value;
         }
@@ -38,14 +39,16 @@ class Model
         return $value;
 
     }
+
+    //
     public function insert()
     {
         $dbh = DbHandle::get();
 
         //
         //識別子のエスケープやらなんやら
-        $table_name = $this->escape($this::$table_name);
-        $cols = $this->escape(array_keys($this->data));
+        $table_name = $this::escape($this::$table_name);
+        $cols = $this::escape(array_keys($this->data));
 
         //
         $sql_cols = implode(', ', $cols);
@@ -88,7 +91,47 @@ class Model
     //
     public static function find($value)
     {
-        
+        //
+        $dbh = DbHandle::get();
+        //プリペアードステートメント作成
+        $table_name = static::escape(static::$table_name);
+        $pk_name = static::escape(static::$pk_name);
+        $sql = "SELECT * FROM {$table_name} WHERE {$pk_name} = {$pk_name}";
+        $pre = $dbh->prepare($sql);
+
+        //
+        if( (true === is_int($value) ) || (true === is_float($value)) )
+        {
+            $type = \PDO::PARAM_INT;
+        } else
+        {
+            $type = \PDO::PARAM_STR;
+        }
+        //
+        $pre->bindValue(":{$pk_name}", $value, $type);
+
+        //SQL実行
+        $r = $pre->execute();
+
+        //データ取得
+        $data = $pre->fetch(\PDO::FETCH_ASSOC);
+
+        if(false === $data)
+        {
+            return null;
+        }
+        //var_dump($data);
+
+        //
+        $robj = new static();
+        $robj->data = $data;
+        /*
+        foreach($data as $k =>$v)
+        {
+            $obj->$k = $v;
+        }
+        */
+        return $robj;
     }
 /*
 INSERT,
