@@ -33,4 +33,4 @@ class DbHandle
 }
 
 $dbh = DbHandle::get();//PDo
-var_dump($dbh);
+//var_dump($dbh);

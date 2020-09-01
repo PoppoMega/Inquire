@@ -15,8 +15,8 @@ if(true === isset($_SESSION['inquiry_data'])){
     }
     $inquiry->created_at = date('Y-m-d H:i:s');
     $r = $inquiry->insert();
-    var_dump($r);
-    exit;
+    //var_dump($r);
+    //exit;
 
     /*
     //
