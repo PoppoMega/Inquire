@@ -9,8 +9,9 @@
 <body>
 <h1>ログイン</h1>
 
+{% if authentication_error == true %}<div>ログインできませんでした</div>{% endif %}
 <form action="admin_login.php" method="POST">
-id:<input name="id" value=""><br>
+id:<input name="id" value="{{ id }}"><br>
 password:<input type="password" name="pw"><br>
 <button>ログイン</button>
 </form>

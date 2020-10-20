@@ -5,7 +5,23 @@ class Model
 
     public function __set($name, $value)
     {
+        //primarykeyならだめです
+        if((true === $pk_deter_flg) && $name === static::$pk_name)
+        {
+            throw new \Exception('主キーは変更できません');
+        }
+        //
         $this->data[$name] = $value;
+    }
+
+    public function __get($name)
+    {
+        //
+        if(false === array_key_exists($name, $this->data))
+        {
+            throw new \Exception("{$name}は無いです");
+        }
+        return $this->data[$name];
     }
 
     //
@@ -40,7 +56,7 @@ class Model
 
     }
 
-    //
+    /*INSERT */
     public function insert()
     {
         $dbh = DbHandle::get();
@@ -84,11 +100,18 @@ class Model
         //疾くSQL実行
         $r = $pre->execute();
         //var_dump($r);
+        
+        //PK更新の抑止
+        if(true === $r)
+        {
+            $this->pk_deter_flg = true;
+        }
         return($r);
 
 
     }
-    //
+
+    /* FIND */
     public static function find($value)
     {
         //
@@ -131,7 +154,66 @@ class Model
             $obj->$k = $v;
         }
         */
+
+        //PK更新の抑止
+        $robj->pk_deter_flg = true;
+
+        //
         return $robj;
+    }
+
+    /* UPDATE */
+    public function update()
+    {
+        //更新するブツ取得
+        //変更のないデータもアップ
+        $data = $this->data;
+        unset($data[static::$pk_name]);
+        //var_dump($data);
+        
+        //ｐｋ情報取得
+        $pk = $this->{static::$pk_name};
+        //var_dump(static::$pk_name,$pk);
+
+        //
+        $dbh = Dbhandle::get();
+        //SQ組み立て
+        $table_name = $this::escape($this::$table_name);
+        $cols = $this::escape(array_keys($data));
+        $pk_col = $this::escape(static::$pk_name);
+
+        //
+        $set_array = [];
+        foreach($cols as $s)
+        {
+            $set_array[] = "{$s} = :{$s}";
+        }
+        $set_value = implode(', ', $set_array);
+    $sql = "UPDATE {$table_name} SET {$set_value} WHERE {$pk_col} =:{$pk_col};";
+        //var_dump($table_name,$cols,$pk_col);exit;
+        $pre = $dbh->prepare($sql);
+
+         //プレースホルダに値をバインド
+         foreach($this->data as $k => $v)
+         {
+             //
+             if(true === is_null($v))
+             {
+                 $type = \PDO::PARAM_NULL;
+             }else if( (true === is_int($v) ) || (true === is_float($v)) )
+             {
+                 $type = \PDO::PARAM_INT;
+             } else
+             {
+                 $type = \PDO::PARAM_STR;
+             }
+             //
+             $pre->bindValue(":{$k}", $v, $type);
+         }
+        //実行
+
+        var_dump($sql);
+        exit;
     }
 /*
 INSERT,
@@ -139,4 +221,5 @@ UPDATE,
 SELECT (WEHRE , ID)
 */
 private $data = [];
+private $pk_deter_flg = false;
 }
