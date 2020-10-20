@@ -1,1 +1,1 @@
-# Inquire
+# Inquiry
