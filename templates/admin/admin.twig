@@ -1,20 +1,14 @@
-<!DOCTYPE html>
-<html lang = "ja">
-<head>
-<title>問い合わせ</title>
-<meta charset="utf-8">
-<link rel="stylesheet" href="">
 
-</head>
-<body>
+{% extends 'admin/layout_base.twig' %}
+
+{% block title %}ログイン{% endblock %}
+
+{% block body %}
 <h1>ログイン</h1>
-
 {% if authentication_error == true %}<div>ログインできませんでした</div>{% endif %}
 <form action="admin_login.php" method="POST">
 id:<input name="id" value="{{ id }}"><br>
 password:<input type="password" name="pw"><br>
 <button>ログイン</button>
 </form>
-
-</body>
-</html>
+{% endblock %}

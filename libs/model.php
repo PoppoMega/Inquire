@@ -2,7 +2,13 @@
 //
 class Model
 {
-
+    //
+    /*データ取得 */
+    public function get()
+    {
+        return $this->data;
+    }
+    //
     public function __set($name, $value)
     {
         //primarykeyならだめです
@@ -78,24 +84,13 @@ class Model
         //
         $sql = "INSERT INTO {$table_name}({$sql_cols}) VALUES({$sql_holder});";
         $pre = $dbh->prepare($sql);
-        var_dump($pre);
+        //var_dump($pre);
 
         //プレースホルダに値をバインド
         foreach($this->data as $k => $v)
         {
             //
-            if(true === is_null($v))
-            {
-                $type = \PDO::PARAM_NULL;
-            }else if( (true === is_int($v) ) || (true === is_float($v)) )
-            {
-                $type = \PDO::PARAM_INT;
-            } else
-            {
-                $type = \PDO::PARAM_STR;
-            }
-            //
-            $pre->bindValue(":{$k}", $v, $type);
+            $this::bind($pre,$k,$v);
         }
         //疾くSQL実行
         $r = $pre->execute();
@@ -106,7 +101,7 @@ class Model
         {
             $this->pk_deter_flg = true;
         }
-        return($r);
+        return $r;
 
 
     }
@@ -119,19 +114,12 @@ class Model
         //プリペアードステートメント作成
         $table_name = static::escape(static::$table_name);
         $pk_name = static::escape(static::$pk_name);
-        $sql = "SELECT * FROM {$table_name} WHERE {$pk_name} = {$pk_name}";
+        $sql = "SELECT * FROM {$table_name} WHERE {$pk_name}=:{$pk_name};";
         $pre = $dbh->prepare($sql);
 
-        //
-        if( (true === is_int($value) ) || (true === is_float($value)) )
-        {
-            $type = \PDO::PARAM_INT;
-        } else
-        {
-            $type = \PDO::PARAM_STR;
-        }
-        //
-        $pre->bindValue(":{$pk_name}", $value, $type);
+        //値のバインド
+        static::bind($pre, $pk_name, $value);
+
 
         //SQL実行
         $r = $pre->execute();
@@ -143,8 +131,6 @@ class Model
         {
             return null;
         }
-        //var_dump($data);
-
         //
         $robj = new static();
         $robj->data = $data;
@@ -169,7 +155,6 @@ class Model
         //変更のないデータもアップ
         $data = $this->data;
         unset($data[static::$pk_name]);
-        //var_dump($data);
         
         //ｐｋ情報取得
         $pk = $this->{static::$pk_name};
@@ -189,31 +174,37 @@ class Model
             $set_array[] = "{$s} = :{$s}";
         }
         $set_value = implode(', ', $set_array);
-    $sql = "UPDATE {$table_name} SET {$set_value} WHERE {$pk_col} =:{$pk_col};";
+        $sql = "UPDATE {$table_name} SET {$set_value} WHERE {$pk_col} =:{$pk_col};";
         //var_dump($table_name,$cols,$pk_col);exit;
         $pre = $dbh->prepare($sql);
 
          //プレースホルダに値をバインド
          foreach($this->data as $k => $v)
          {
-             //
-             if(true === is_null($v))
-             {
-                 $type = \PDO::PARAM_NULL;
-             }else if( (true === is_int($v) ) || (true === is_float($v)) )
-             {
-                 $type = \PDO::PARAM_INT;
-             } else
-             {
-                 $type = \PDO::PARAM_STR;
-             }
-             //
-             $pre->bindValue(":{$k}", $v, $type);
+            $this::bind($pre, $k, $v);
          }
         //実行
+         $r = $pre->execute();
+         return $r;
+        //var_dump($sql);
+        //exit;
+        
+    }
 
-        var_dump($sql);
-        exit;
+
+    //BIND
+    protected static function bind(\PDOStatement $pre, string $k, $v) : bool
+    {
+        if(true === is_null($v))
+        {
+            $type = \PDO::PARAM_NULL;
+        }else if( (true === is_int($v) ) || (true === is_float($v)) ){
+            $type = \PDO::PARAM_INT;
+        } else{
+            $type = \PDO::PARAM_STR;
+        }
+        //
+        return $pre->bindValue(":{$k}", $v, $type);
     }
 /*
 INSERT,

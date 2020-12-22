@@ -1,0 +1,35 @@
+{% extends 'admin/layout.twig' %}
+
+{% block title %}ログイン{% endblock %}
+
+{% block contents %}
+<h1>お問い合わせ一覧</h1>
+検索
+<form action="./admin_top.php">
+    名前(あいまい検索):<input name="name" value="{{ find_items.name }}"><br>
+    問い合わせ日時:<input type="date" name="form" value="{{ find_items.from }}">
+                ~<input type="date" name="to" value="{{ find_items.to }}"><br>
+    返信有無:<label><input type="checkbox" name="replay_flg[]" value="0"{% if 0 in find_items_flg %}checked{% endif %}>未返信</label>
+            <label><input type="checkbox" name="replay_flg[]" value="1"{% if 1 in find_items_flg %}checked{% endif %}>返信済み</label><br>
+    <button>検索</button>
+</form>
+
+<table border="1">
+<tr>
+    <th>問い合わせ日時<a href="./top.php?sort=created_at&{{ find_param_string|raw }}">↑</a>
+                     <a href="./top.php?sort=created_at_desc&{{ find_param_string|raw }}">↓</a></th>
+    <th>名前<a href="./top.php?sort=created_at"&{{ find_param_string|raw }}>↑</a>
+            <a href="./top.php?sort=created_at_desc&{{ find_param_string|raw }}">↓</a></th>  
+    <th>返信有無</th>
+    <th>問い合わせ本文（最初の何文字か）</th>
+{% for key, val in inquiry_list %}
+<tr>
+    <td>{{ val.created_at }}
+    <td>{{ val.name }}
+    <td>{% if val.reply_at == null %}未返信{% else %}返信済み{% endif %}
+    <td>{{ val.body | slice(0,20) }}
+    <td><a href="inquiry_detail.php?inquiry_id={{ val.inquiry_id | e('url') }}">詳細</a></td>
+</table>
+{% endfor%}
+
+{% endblock %}

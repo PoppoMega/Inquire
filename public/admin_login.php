@@ -4,7 +4,7 @@
 require_once('init.php');
 require_once(BASEPATH . '/libs/AdminAuthentication.php');
 
-var_dump($_POST);
+//var_dump($_POST);
 //formから情報を取得
 $id = strval($_POST['id']) ?? '';
 $pass = strval($_POST['pw']) ?? '';
@@ -18,9 +18,18 @@ if(null === AdminAuthentication::login($id,$pass)){
 
    
     //入力画面に戻す
-    //echo 'ng';
     header('Location: ./admin.php');
+    exit;
 }
 
 //PASSチェック
-echo 'ok';
+//echo 'ok'
+
+//セッションIDを切り替える
+session_regenerate_id(true);
+//セッション認可用情報入れる
+$_SESSION['admin']['auth']['login_id'] = $admin_obj->login_id;
+
+//ログイン後にトップへ移動
+//var_dump($_SESSION);exit;
+header('Location: ./admin_top.php');
